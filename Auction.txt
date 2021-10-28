@@ -1,0 +1,10 @@
+User can create a listing with the item description (and images), a starting price, and a minimum price for an instant buy if desired. Also specify the timeframe of the listing, with a minimum of a day.
+
+
+When someone bids on the auction item, make sure that the bid is greater than the starting price, more broadly the current price. Update the listing accordingly.
+
+
+If the bid reaches the instant buy price, complete the transaction and remove the listing.
+
+
+Once the countdown timer is over, complete the transaction with the highest bid. If no bids were placed, remove the listing from the market.
