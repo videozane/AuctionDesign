@@ -1,0 +1,46 @@
+Class called listing - contains variables for current price, current user with highest bid, description, time remaining, instant buy price
+List<listing> allListings
+method createListing() - creates an object of class listing with all the stuff, and puts it into a list of listings
+takes less than or equal to 5 blocks
+
+method completeTransaction(listing item)
+remove item from allListings, and give the currentuser the item
+first currentUser is the person owning the item
+takes less than or equal to 5 blocks
+
+Map accounts - contains a map from wallet addresses to their balances
+method bid(listing item, newPrice) - check if the newPrice is larger than the current price, and if so, change the listing price and the currentuser
+also check if newPrice>instant buy price, if so, then completeTransaction
+takes two blocks so timeCheck is okay
+
+method timeCheck()
+for(listing item:allListings)
+check if the time remaining <=0, if so, then completeTransaction
+update time for each item
+
+takes one block
+
+method autoBid(item, maxPrice, priceIncrease)
+
+Priority List for features (along with the variables needed for each method)
+1. Create Listings/the class for Listing
+2. Bid
+3. Complete transaction
+4. timeCheck
+5. autoBid
+
+
+
+User can create a listing with the item description (and images), a starting price, and a minimum price for an instant buy if desired. Also specify the timeframe of the listing, with a minimum of a day.
+
+
+When someone bids on the auction item, make sure that the bid is greater than the starting price, more broadly the current price. Update the listing accordingly.
+
+
+If the bid reaches the instant buy price, complete the transaction and remove the listing.
+
+
+Once the countdown timer is over, complete the transaction with the highest bid. If no bids were placed, remove the listing from the market.
+
+
+For buyers, provide the ability to auto bid. After setting a maximum price that they are willing to pay, as well as an increase in price over the current maximum bid (that is not their own), any bid that exceeds the buyer's bid will be matched. However, as this takes away some of the profitability of the site (through ads for example), it might be smart to add a fee for using this service. 
