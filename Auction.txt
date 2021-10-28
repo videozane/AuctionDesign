@@ -8,3 +8,6 @@ If the bid reaches the instant buy price, complete the transaction and remove th
 
 
 Once the countdown timer is over, complete the transaction with the highest bid. If no bids were placed, remove the listing from the market.
+
+
+For buyers, provide the ability to auto bid. After setting a maximum price that they are willing to pay, as well as an increase in price over the current maximum bid (that is not their own), any bid that exceeds the buyer's bid will be matched. However, as this takes away some of the profitability of the site (through ads for example), it might be smart to add a fee for using this service. 
