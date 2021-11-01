@@ -1,31 +1,39 @@
-Class called listing - contains variables for nft, current price, current user with highest bid, description, time remaining/endBlock, instant buy price
-Use the time remaining to estimate what block will be the endBlock for the listing
+# Listing Class #
+Variables
+- item (nft)
+- currentPrice (double)
+- currentUser (User)
+- description (string)
+- endBlock (block)
+- instantBuyPrice (double)
+Methods
 
-List<listing> allListings
-method createListing() - creates an object of class listing with all the stuff, and puts it into a list of listings
+# Database Class #
+Variables
+allListings (List of listings)
+Map accounts - contains a map from wallet addresses to their balances
+
+Methods
+- method createListing() - creates an object of class listing with all the stuff, and puts it into a list of listings
 takes less than or equal to 5 blocks
-
-method completeTransaction(listing item)
+- method completeTransaction(listing item)
 remove item from allListings, and transfer the item nft from seller to currentuser
 first currentUser is the person owning the item
 takes less than or equal to 5 blocks
-
-Map accounts - contains a map from wallet addresses to their balances
-method bid(listing item, newPrice) - 
+- method bid(listing item, newPrice) - 
 timeCheck
 check if the auction is still there, if not, then don't make their bid
 check if the newPrice is larger than the current price, and if so, change the listing price and the currentuser
 also check if newPrice>instant buy price, if so, then completeTransaction
 takes one block
-
-method timeCheck()
+- method timeCheck()
 for(listing item:allListings)
 check if the currentBlock is the item's endBlock, if so, then completeTransaction
 update time for each item
 takes one block
-
-method autoBid(item, maxPrice, priceIncrease)
+- method autoBid(item, maxPrice, priceIncrease)
 every 2 blocks, check if item currentPrice+priceIncrease<=maxPrice, if so, then bid(item, item's currentPrice+priceIncrease)
+
 
 Priority List for features (along with the variables needed for each method)
 1. Create Listings/the class for Listing
