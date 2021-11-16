@@ -1,0 +1,89 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 // SPDX-License-Identifier: GPL-3.0\
+\
+pragma solidity >=0.7.0 <0.9.0;\
+import "./Listing.sol";\
+\
+/**\
+ * @title Database\
+ */\
+contract Database \{\
+    uint256 private currentBlock = block.number;\
+    Listing[] private allListings;\
+    mapping (address => uint) accounts;\
+    \
+    function createListing(address _nft, uint _nID, string memory desc, uint256 curPri, uint256 insPri, uint256 eBlock) public\
+    \{\
+        Listing newListing = new Listing(_nft, _nID, desc, curPri, insPri, eBlock);\
+        allListings.push(newListing);\
+    \}\
+    \
+    function bid(Listing item, uint256 newPrice) public\
+    \{\
+       timeCheck();\
+       if (allListingsContains(item))\
+       \{\
+           if (newPrice > item.currentPrice())\
+           \{\
+               item.setCurrentPrice(newPrice);\
+               item.setCurrentUser(payable(msg.sender));\
+               \
+               if (newPrice >= item.instantBuyPrice())\
+               \{\
+                   completeTransaction(item);\
+               \}\
+           \}\
+       \}\
+    \}\
+    \
+    function allListingsContains(Listing item) private view returns (bool)\
+    \{\
+        for (uint i=0; i < allListings.length; i++)\
+        \{\
+            if (item == allListings[i])\
+                return true;\
+        \}\
+        return false;\
+    \}\
+    \
+    function completeTransaction(Listing item) public\
+    \{\
+        for (uint i=0; i < allListings.length; i++)\
+        \{\
+            if (item == allListings[i])\
+            \{\
+                for (uint j = i; j<allListings.length-1; j++)\
+                \{\
+                    allListings[j] = allListings[j+1];\
+                \}\
+            delete allListings[allListings.length-1];\
+            \}\
+        \}\
+        //send nft to winner\
+    \}\
+    \
+    function timeCheck() private\
+    \{\
+        for (uint i=0; i < allListings.length; i++)\
+        \{\
+            if (block.number >= allListings[i].endBlock())\
+            \{\
+                completeTransaction(allListings[i]);\
+            \}\
+        \}\
+    \}\
+    \
+    function autoBid() public\
+    \{\
+        \
+    \}\
+    \
+    \
+\
+\}}
