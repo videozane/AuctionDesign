@@ -1,0 +1,105 @@
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol"; 
+//import "./artifacts/ERC721Enumberable.sol";
+
+/**
+ * @title AuctionListing
+ * 
+ * Methods supposed to be in Database (as per tech spec) are now in Listing
+ * Because this is the code of only 1 auction, not the whole database
+ * 
+ * Auction design customizations: Instant buy price and autoBid
+ * split completetransaction into multiple functions to reform tech spec
+ * auction time counted in blocks rather than clock time
+ * users stored as addresses
+ */
+contract AuctionListing {
+    uint256 public currentPrice;
+    uint256 public instantBuyPrice;
+    string private description;
+    address public currentUser;
+    uint256 public endBlock;//auction time counted by "blocks", which increases by 2 for each bid
+    uint256 public currentBlock;//current block count
+    
+    //added variables
+    IERC721 public nft;
+    uint256 public nftID;
+    bool public isOpen;
+    address payable public seller;//must save for transfer
+    
+    
+    constructor(string memory desc, uint256 curPri, uint256 insPri, uint256 eBlo)
+    {
+        require(eBlo > 5, "This is not a valid time.");
+       isOpen = true;
+       seller = payable(msg.sender);
+       description = desc;
+       currentPrice = curPri;
+       instantBuyPrice = insPri;
+       endBlock = eBlo;
+       currentBlock = 0;
+    }
+    
+    function assignNFT(address _nft, uint256 _nftID) public
+    {
+        require(msg.sender == seller);
+        nft = IERC721(_nft);
+        nftID = _nftID;
+    }
+    
+    function timeCheck() public
+    {
+        require(currentBlock >= endBlock);
+        isOpen = false;
+        completeTransaction();
+        currentBlock++;
+    }
+    
+    function bid(uint256 newPrice) public
+    {
+        timeCheck();
+        require(isOpen, "This auction has already closed.");
+        //added balance check
+        require(uint256((msg.sender).balance) > newPrice, "You don't have enough money for this.");
+        require(newPrice > currentPrice, "Your bidding price is not high enough.");
+        currentPrice = newPrice;
+        currentUser = msg.sender;
+        
+        if(newPrice >= instantBuyPrice)
+        {
+            completeTransaction();
+        }
+        currentBlock++;
+    }
+    
+    //autoBid function, written but not implemented
+    function autoBid(uint256 maxPrice, uint256 priceIncrease) public
+    {
+        //takes 2 more blocks than usual
+        while (isOpen)
+        {
+            if (currentPrice+priceIncrease <= maxPrice)
+            {
+                bid(currentPrice+priceIncrease);
+            }
+        }
+    }
+    
+    function completeTransaction() public payable
+    {
+        isOpen = false;
+        
+        //transferring nft
+        nft.safeTransferFrom(seller, currentUser, nftID);
+        nft.approve(currentUser, nftID);
+        
+        //paying, copied from https://solidity-by-example.org/sending-ether/
+        (bool sent, bytes memory data) = currentUser.call{value: (currentPrice+msg.value)}("Transacting.");
+        require(sent, "Failed to send.");
+    }
+    
+}
