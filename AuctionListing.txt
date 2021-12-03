@@ -41,10 +41,10 @@ contract AuctionListing {
        currentPrice = curPri;
        instantBuyPrice = insPri;
        endBlock = eBlo;
-       currentBlock = 0;
+       currentBlock = 5;
     }
     
-    function assignNFT(address _nft, uint256 _nftID) public
+    function setNFT(address _nft, uint256 _nftID) public
     {
         require(msg.sender == seller);
         nft = IERC721(_nft);
@@ -100,6 +100,7 @@ contract AuctionListing {
         //paying, copied from https://solidity-by-example.org/sending-ether/
         (bool sent, bytes memory data) = currentUser.call{value: (currentPrice+msg.value)}("Transacting.");
         require(sent, "Failed to send.");
+        currentBlock+=5;
     }
     
 }
